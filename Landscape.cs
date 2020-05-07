@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -53,9 +53,9 @@ namespace lab8.Assets.Scripts
 				for (int x=0; x<=this.resolution; x++) 
 				{
 				    float f = FractalNoise(new Vector2(z,x), this.gain, this.lacunarity, this.octaves, this.scale, this.shift, this.state);
-					float h = IslandFilter(x, f, z) * this.height * this.gain;
+					float h = IslandFilter(x, f, z)* this.height * this.gain;
 				    vertices[index] = new Vector3(x,h,z);
-					colors[index] = gradient.Evaluate(h/(height*gain/1.3));
+					colors[index] = gradient.Evaluate(h/(height*gain/1.3f));
 				    index++;
 				}
 	    	}
@@ -125,29 +125,33 @@ namespace lab8.Assets.Scripts
 	    	float total = 0;
 			float maxValue = 0;  // Used for normalizing result
 			for (int i = 0; i < octaves; i++) {
-				var x = coords.x * lacunarity * scale + Random.value + shift.x;
-				var y = coords.y * lacunarity * scale + Random.value + shift.y;           
+				var x = coords.x/this.resolution * lacunarity * scale + Random.value + shift.x;
+				var y = coords.y/this.resolution * lacunarity * scale + Random.value + shift.y;           
 				
 				total += Mathf.PerlinNoise(x, y) * gain;
-				lacunarity /= 2;
+				gain *= 0.5f;
+				lacunarity *= 2;
 				maxValue += gain;
 
 			}
+			
 			return total/maxValue;
         }
 
-	    public void AdjustOctaves(float newOctaves) {
-			Debug.Log(newOctaves);
+	    public void AdjustOctaves(float newOctaves) 
+	    {
 			this.octaves = (int) newOctaves;
 			GenerateLandscape();
 		}
 
-	    public void AdjustGain(float newGain) {
+	    public void AdjustGain(float newGain) 
+	    {
 			this.gain = newGain;
 			GenerateLandscape();
 		}
 
-	    public void AdjustLacunarity(float newLacunarity) {
+	    public void AdjustLacunarity(float newLacunarity) 
+	    {
 			this.lacunarity = newLacunarity;
 			GenerateLandscape();
 		}
